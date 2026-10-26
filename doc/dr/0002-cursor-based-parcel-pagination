@@ -1,0 +1,8 @@
+Status
+Accepted
+Context
+The API needs to return parcels in pages instead of returning every parcel in one response. The client also needs a way to continue listing parcels without restarting from the beginning on every request.
+Decision
+The listParcels operation uses cursor-based pagination. Each issued cursor token maps to the last creation sequence number returned on the previous page. The endpoint scans parcels in creation order, supports an optional state filter, and returns a next_cursor when more matching parcels are available.
+Consequences
+The client can request the next page using the returned cursor, without relying on an offset. The API also avoids returning an unlimited number of parcels in one response by limiting each page to at most 100 items. However, issued cursors are stored in memory, so they are not persistent across application restarts, and the implementation is not suitable for shared persistent pagination across multiple independent app instances without further changes.
